@@ -97,4 +97,4 @@ try {
 
 # License
 
-This project is licensed under the GPLv3 License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the LGPLv3 License – see the [LICENSE.md](LICENSE.md) file for details
