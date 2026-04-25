@@ -2,6 +2,9 @@ plugins {
     `java-library`
     `maven-publish`
     idea
+    alias(libs.plugins.indra)
+    alias(libs.plugins.indraPublishing)
+    alias(libs.plugins.indraLicenserSpotless)
 }
 
 repositories {
@@ -21,45 +24,50 @@ dependencies {
     testRuntimeOnly(libs.bundles.junitJupiterRuntime)
 }
 
+indra {
+    javaVersions {
+        target(25)
+    }
+
+    github("hboyd2003", "configurate-nbt") {
+        ci(true)
+        publishing(false)
+    }
+
+    publishReleasesTo("hboydDev", "https://repo.hboyd.dev/releases")
+    publishSnapshotsTo("hboydDev", "https://repo.hboyd.dev/snapshots")
+
+    lgpl3OrLaterLicense()
+
+    signWithKeyFromPrefixedProperties("hboyd")
+
+    configurePublications {
+        pom {
+            developers {
+                developer {
+                    id = "hboyd"
+                    timezone = "America/New_York"
+                }
+            }
+        }
+    }
+}
+
+indraSpotlessLicenser {
+    licenseHeaderFile(rootProject.file(".spotless/license_header_template.txt"))
+    newLine(true)
+}
+
+spotless {
+    java {
+        removeUnusedImports()
+        formatAnnotations()
+    }
+}
+
 idea {
     module {
         isDownloadJavadoc = true
         isDownloadSources = true
-    }
-}
-
-val targetJavaVersion = 25
-java {
-    withJavadocJar()
-    withSourcesJar()
-
-    val javaVersion = JavaVersion.toVersion(targetJavaVersion)
-    sourceCompatibility = javaVersion
-    targetCompatibility = javaVersion
-    if (JavaVersion.current() < javaVersion) {
-        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
-    }
-}
-
-
-
-publishing {
-    repositories {
-        maven {
-            credentials {
-                username = System.getenv("MAVEN_USERNAME")
-                password = System.getenv("MAVEN_PASSWORD")
-            }
-
-            name = "hboyd-dev-repo"
-            url = uri("https://repo.hboyd.dev/" + (if (version.toString().contains("SNAPSHOT")) "snapshots/" else "releases/")
-            )
-        }
-    }
-
-    publications {
-        create<MavenPublication>("maven") {
-            from(components["java"])
-        }
     }
 }

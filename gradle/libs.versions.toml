@@ -1,4 +1,6 @@
 [versions]
+# Gradle Plugins
+indra = "4.2.0-SNAPSHOT"
 # Libraries
 adventureAPI = "4.26.1"
 configurate = "4.2.0"
@@ -8,6 +10,11 @@ jspecify = "1.0.0"
 
 # Testing
 junit = "6.0.3"
+
+[plugins]
+indra = { id = "net.kyori.indra", version.ref = "indra" }
+indraPublishing = { id = "net.kyori.indra.publishing", version.ref = "indra" }
+indraLicenserSpotless = { id = "net.kyori.indra.licenser.spotless", version.ref = "indra" }
 
 [libraries]
 configurateCore = { group = "org.spongepowered", name = "configurate-core", version.ref = "configurate" }
