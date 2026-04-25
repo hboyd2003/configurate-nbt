@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.indra)
     alias(libs.plugins.indraPublishing)
     alias(libs.plugins.indraLicenserSpotless)
+    alias(libs.plugins.indraCheckstyle)
 }
 
 repositories {
@@ -38,6 +39,8 @@ indra {
     publishSnapshotsTo("hboydDev", "https://repo.hboyd.dev/snapshots")
 
     lgpl3OrLaterLicense()
+
+    checkstyle(libs.versions.checkstyle.get())
 
     signWithKeyFromPrefixedProperties("hboyd")
 
