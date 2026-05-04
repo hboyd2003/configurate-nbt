@@ -18,9 +18,14 @@
 
 package dev.hboyd.configurateNBT.serializer;
 
-import net.kyori.adventure.nbt.*;
+import net.kyori.adventure.nbt.ByteBinaryTag;
+import net.kyori.adventure.nbt.DoubleBinaryTag;
+import net.kyori.adventure.nbt.FloatBinaryTag;
+import net.kyori.adventure.nbt.IntBinaryTag;
+import net.kyori.adventure.nbt.LongBinaryTag;
+import net.kyori.adventure.nbt.NumberBinaryTag;
+import net.kyori.adventure.nbt.ShortBinaryTag;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.jspecify.annotations.NullMarked;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.Scalars;
 import org.spongepowered.configurate.serialize.SerializationException;
@@ -28,8 +33,13 @@ import org.spongepowered.configurate.serialize.TypeSerializer;
 
 import java.lang.reflect.Type;
 
-@NullMarked
-public class TypeSafeNumberBinaryTagSerializer implements TypeSerializer<NumberBinaryTag> {
+/**
+ * Serializer for {@link NumberBinaryTag}s that maintains types by appending SNBT-like suffixes.
+ *
+ * <p>Intended to be used with {@link org.spongepowered.configurate.loader.ConfigurationLoader} implementations that
+ * do not maintain types.</p>
+ */
+public final class TypeSafeNumberBinaryTagSerializer implements TypeSerializer<NumberBinaryTag> {
     public static final TypeSafeNumberBinaryTagSerializer INSTANCE = new TypeSafeNumberBinaryTagSerializer();
     private static final char INT_SUFFIX = 'i';
     private static final char DOUBLE_SUFFIX = 'd';
@@ -41,7 +51,7 @@ public class TypeSafeNumberBinaryTagSerializer implements TypeSerializer<NumberB
     private TypeSafeNumberBinaryTagSerializer() {}
 
     @Override
-    public @Nullable NumberBinaryTag deserialize(Type type, ConfigurationNode node) throws SerializationException {
+    public @Nullable NumberBinaryTag deserialize(final Type type, final ConfigurationNode node) throws SerializationException {
         String string = node.get(String.class);
         if (string == null) return null;
 
@@ -63,22 +73,22 @@ public class TypeSafeNumberBinaryTagSerializer implements TypeSerializer<NumberB
                 case FLOAT_SUFFIX -> FloatBinaryTag.floatBinaryTag(Float.parseFloat(string));
                 default -> throw new SerializationException("Unknown number binary tag: " + string);
             };
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             throw new SerializationException(e);
         }
     }
 
     @Override
-    public void serialize(Type type, @Nullable NumberBinaryTag numberBinaryTag, ConfigurationNode node) throws SerializationException {
+    public void serialize(final Type type, @Nullable final NumberBinaryTag numberBinaryTag, final ConfigurationNode node) throws SerializationException {
         if (numberBinaryTag == null) return;
 
         switch (numberBinaryTag) {
-            case IntBinaryTag tag -> node.set(Scalars.STRING.type(), Integer.toString(tag.value()));
-            case DoubleBinaryTag tag -> node.set(Scalars.STRING.type(), Double.toString(tag.value()));
-            case ByteBinaryTag tag -> node.set(Scalars.STRING.type(), Byte.toString(tag.value()) + BYTE_SUFFIX);
-            case LongBinaryTag tag -> node.set(Scalars.STRING.type(), Long.toString(tag.value()) + LONG_SUFFIX);
-            case ShortBinaryTag tag -> node.set(Scalars.STRING.type(), Short.toString(tag.value()) + SHORT_SUFFIX);
-            case FloatBinaryTag tag -> node.set(Scalars.STRING.type(), Float.toString(tag.value()) + FLOAT_SUFFIX);
+            case final IntBinaryTag tag -> node.set(Scalars.STRING.type(), Integer.toString(tag.value()));
+            case final DoubleBinaryTag tag -> node.set(Scalars.STRING.type(), Double.toString(tag.value()));
+            case final ByteBinaryTag tag -> node.set(Scalars.STRING.type(), Byte.toString(tag.value()) + BYTE_SUFFIX);
+            case final LongBinaryTag tag -> node.set(Scalars.STRING.type(), Long.toString(tag.value()) + LONG_SUFFIX);
+            case final ShortBinaryTag tag -> node.set(Scalars.STRING.type(), Short.toString(tag.value()) + SHORT_SUFFIX);
+            case final FloatBinaryTag tag -> node.set(Scalars.STRING.type(), Float.toString(tag.value()) + FLOAT_SUFFIX);
             default -> throw new SerializationException("Unknown number binary tag: " + numberBinaryTag);
         }
     }

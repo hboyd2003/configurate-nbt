@@ -18,7 +18,6 @@
 
 package dev.hboyd.configurateNBT;
 
-import org.jspecify.annotations.NullMarked;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.loader.ConfigurationFormat;
 import org.spongepowered.configurate.loader.ConfigurationLoader;
@@ -28,7 +27,9 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.util.Set;
 
-@NullMarked
+/**
+ * The configuration format for the {@link NBTConfigurationLoader}.
+ */
 public class NBTConfigurationFormat implements ConfigurationFormat {
     @Override
     public String id() {
@@ -48,21 +49,21 @@ public class NBTConfigurationFormat implements ConfigurationFormat {
      * @return a newly created {@link NBTConfigurationLoader} loader
      */
     @Override
-    public NBTConfigurationLoader create(Path file, ConfigurationNode options) {
+    public NBTConfigurationLoader create(final Path file, final ConfigurationNode options) {
         try {
             return NBTConfigurationLoader.builder().path(file).defaultOptions(options.options()).build();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     /**
-     * Unsupported by {@link NBTConfigurationLoader}
+     * Unsupported by {@link NBTConfigurationLoader}.
      *
      * @throws UnsupportedOperationException for all calls
      */
     @Override
-    public ConfigurationLoader<? extends Object> create(URL url, ConfigurationNode options) {
+    public ConfigurationLoader<? extends Object> create(final URL url, final ConfigurationNode options) {
         throw new UnsupportedOperationException();
     }
 }

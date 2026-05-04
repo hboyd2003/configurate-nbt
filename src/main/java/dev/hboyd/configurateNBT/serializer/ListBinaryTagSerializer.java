@@ -21,7 +21,6 @@ package dev.hboyd.configurateNBT.serializer;
 import net.kyori.adventure.nbt.BinaryTag;
 import net.kyori.adventure.nbt.BinaryTagType;
 import net.kyori.adventure.nbt.ListBinaryTag;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.ConfigurationOptions;
@@ -34,21 +33,23 @@ import java.util.List;
 
 import static java.util.Objects.requireNonNull;
 
-@NullMarked
-public class ListBinaryTagSerializer implements TypeSerializer<ListBinaryTag> {
+/**
+ * Serializer for {@link ListBinaryTag}s.
+ */
+public final class ListBinaryTagSerializer implements TypeSerializer<ListBinaryTag> {
     public static final ListBinaryTagSerializer INSTANCE = new ListBinaryTagSerializer();
 
     private ListBinaryTagSerializer() {}
 
     @Override
-    public ListBinaryTag deserialize(Type type, ConfigurationNode node) throws SerializationException {
+    public ListBinaryTag deserialize(final Type type, final ConfigurationNode node) throws SerializationException {
         final TypeSerializer<BinaryTag> binaryTagSerializer =
                 requireNonNull(node.options().serializers().get(BinaryTag.class), "BinaryTag serializer");
 
         final List<BinaryTag> binaryTags = new ArrayList<>(node.childrenList().size());
         BinaryTagType<?> listType = null;
         boolean heterogeneous = false;
-        for (ConfigurationNode childNode : node.childrenList()) {
+        for (final ConfigurationNode childNode : node.childrenList()) {
             final BinaryTag binaryTag = binaryTagSerializer.deserialize(type, childNode);
 
             if (listType == null) listType = binaryTag.type();
@@ -67,14 +68,14 @@ public class ListBinaryTagSerializer implements TypeSerializer<ListBinaryTag> {
     }
 
     @Override
-    public void serialize(Type type, @Nullable ListBinaryTag listBinaryTag, ConfigurationNode node) throws SerializationException {
+    public void serialize(final Type type, @Nullable final ListBinaryTag listBinaryTag, final ConfigurationNode node) throws SerializationException {
         if (listBinaryTag == null) return;
 
         node.setList(BinaryTag.class, listBinaryTag.stream().toList());
     }
 
     @Override
-    public @Nullable ListBinaryTag emptyValue(Type specificType, ConfigurationOptions options) {
+    public @Nullable ListBinaryTag emptyValue(final Type specificType, final ConfigurationOptions options) {
         return ListBinaryTag.builder().build();
     }
 }

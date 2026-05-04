@@ -18,8 +18,14 @@
 
 package dev.hboyd.configurateNBT.serializer;
 
-import net.kyori.adventure.nbt.*;
-import org.jspecify.annotations.NonNull;
+import net.kyori.adventure.nbt.ArrayBinaryTag;
+import net.kyori.adventure.nbt.BinaryTag;
+import net.kyori.adventure.nbt.BinaryTagType;
+import net.kyori.adventure.nbt.BinaryTagTypes;
+import net.kyori.adventure.nbt.CompoundBinaryTag;
+import net.kyori.adventure.nbt.ListBinaryTag;
+import net.kyori.adventure.nbt.NumberBinaryTag;
+import net.kyori.adventure.nbt.StringBinaryTag;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
@@ -31,21 +37,43 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 
 /**
- * Provides serializers for {@link BinaryTag}.
- * <p>
- * "type-unsafe" relies on the {@link org.spongepowered.configurate.loader.ConfigurationLoader} to produce correctly typed numeric values in deserialization.
- * <p>
- * "type-safe" ensures that for all {@link org.spongepowered.configurate.loader.ConfigurationLoader} deserialization will produce accurate numeric types.
- * This is done by storing numeric values with SNBT like primitive suffixes.
+ * Serializer for {@link BinaryTag}s.
+ *
+ * <p>Optionally supports {@link org.spongepowered.configurate.loader.ConfigurationLoader} implementations that do not maintain
+ * numeric type saftey.</p>
+ *
  * @see <a href="https://minecraft.wiki/w/NBT_format#Data_types">Minecraft Wiki - SNBT Data types</a>
+ * @see BinaryTagSerializer#TYPE_UNSAFE
+ * @see BinaryTagSerializer#TYPE_SAFE
+ * @see BinaryTagSerializer#TYPE_UNSAFE_SERIALIZERS
+ * @see BinaryTagSerializer#TYPE_SAFE_SERIALIZERS
  */
-@NullMarked
-public class BinaryTagSerializer implements TypeSerializer<BinaryTag> {
+public final class BinaryTagSerializer implements TypeSerializer<BinaryTag> {
+    /**
+     * Serializer for {@link BinaryTag}s.
+     *
+     * <p>Types will not be maintained if the used {@link org.spongepowered.configurate.loader.ConfigurationLoader}
+     * implementation does not fully maintain types.</p>
+     *
+     * <p>Requires serializers for each {@link BinaryTag} type to be registered with the loader.</p>.
+     */
     public static final BinaryTagSerializer TYPE_UNSAFE = new BinaryTagSerializer(false);
+
+    /**
+     * Serializer for {@link BinaryTag}s which attempts to coerce strings into {@link NumberBinaryTag}
+     * before creating {@link StringBinaryTag}s with them.
+     *
+     * <p>Requires serializers for each {@link BinaryTag} type to be registered with the loader.</p>.
+     */
     public static final BinaryTagSerializer TYPE_SAFE = new BinaryTagSerializer(true);
 
     /**
-     * Collection of all "type-unsafe" BinaryTag serializers
+     * Collection of all "type-unsafe" BinaryTag serializers.
+     *
+     * <p>Types will not be maintained if the used {@link org.spongepowered.configurate.loader.ConfigurationLoader}
+     * implementation does not fully maintain types.</p>
+     *
+     * @see BinaryTagSerializer#TYPE_UNSAFE
      */
     public static final TypeSerializerCollection TYPE_UNSAFE_SERIALIZERS = TypeSerializerCollection.builder()
             .registerExact(BinaryTag.class, BinaryTagSerializer.TYPE_UNSAFE)
@@ -57,7 +85,13 @@ public class BinaryTagSerializer implements TypeSerializer<BinaryTag> {
             .build();
 
     /**
-     * Collection of all "type-safe" BinaryTag serializers
+     * Collection of all "type-safe" BinaryTag serializers.
+     *
+     * <p>Types are maintained even if the used {@link org.spongepowered.configurate.loader.ConfigurationLoader}
+     * implementation does not maintain them by appending SNBT-like suffixes to numerical values.</p>
+     *
+     * @see BinaryTagSerializer#TYPE_SAFE
+     * @see TypeSafeNumberBinaryTagSerializer
      */
     public static final TypeSerializerCollection TYPE_SAFE_SERIALIZERS = TypeSerializerCollection.builder()
             .registerExact(BinaryTag.class, BinaryTagSerializer.TYPE_SAFE)
@@ -70,44 +104,44 @@ public class BinaryTagSerializer implements TypeSerializer<BinaryTag> {
 
     private final boolean typesafe;
 
-    private BinaryTagSerializer(boolean typesafe) {
+    private BinaryTagSerializer(final boolean typesafe) {
         this.typesafe = typesafe;
     }
 
     @Override
     @NullMarked
-    public BinaryTag deserialize(Type type, ConfigurationNode node) throws SerializationException {
-        if (node.isList()) return deserializeList(node);
+    public BinaryTag deserialize(final Type type, final ConfigurationNode node) throws SerializationException {
+        if (node.isList()) return this.deserializeList(node);
         else if (node.isMap()) return node.options().serializers().get(CompoundBinaryTag.class)
                 .deserialize(CompoundBinaryTag.class, node);
 
-        return deserializePrimitive(node);
+        return this.deserializePrimitive(node);
     }
 
-    private BinaryTag deserializePrimitive(@NonNull ConfigurationNode node) throws SerializationException {
-        if (typesafe) {
+    private BinaryTag deserializePrimitive(final ConfigurationNode node) throws SerializationException {
+        if (this.typesafe && node.raw() instanceof String) {
             try {
                 return node.options().serializers().get(NumberBinaryTag.class).deserialize(NumberBinaryTag.class, node);
-            } catch (SerializationException e) {
+            } catch (final SerializationException _) {
                 return StringBinaryTag.stringBinaryTag(node.getString());
             }
         }
 
         // Deserialize as "type-unsafe" which relies on the loader to load each as the correct type.
         return switch (node.raw()) {
-            case String ignored -> node.options().serializers().get(StringBinaryTag.class).deserialize(StringBinaryTag.class, node);
-            case Array ignored -> node.options().serializers().get(ArrayBinaryTag.class).deserialize(ArrayBinaryTag.class, node);
-            case Number ignored -> node.options().serializers().get(NumberBinaryTag.class).deserialize(NumberBinaryTag.class, node);
+            case final String ignored -> node.options().serializers().get(StringBinaryTag.class).deserialize(StringBinaryTag.class, node);
+            case final Array ignored -> node.options().serializers().get(ArrayBinaryTag.class).deserialize(ArrayBinaryTag.class, node);
+            case final Number ignored -> node.options().serializers().get(NumberBinaryTag.class).deserialize(NumberBinaryTag.class, node);
             default -> throw new IllegalStateException("Unexpected type: " + node.raw());
         };
     }
 
-    private BinaryTag deserializeList(@NonNull ConfigurationNode node) throws SerializationException {
-        ListBinaryTag listBinaryTag = node.options().serializers().get(ListBinaryTag.class).deserialize(ListBinaryTag.class, node);
+    private BinaryTag deserializeList(final ConfigurationNode node) throws SerializationException {
+        final ListBinaryTag listBinaryTag = node.options().serializers().get(ListBinaryTag.class).deserialize(ListBinaryTag.class, node);
         if (listBinaryTag.isEmpty()) return listBinaryTag;
 
-        // Check if this list can be a ArrayBinaryTag
-        BinaryTagType<?> listElementType = listBinaryTag.get(0).type();
+        // Check if this list can be an ArrayBinaryTag
+        final BinaryTagType<?> listElementType = listBinaryTag.get(0).type();
         if (listElementType != BinaryTagTypes.INT
                 && listElementType != BinaryTagTypes.BYTE
                 && listElementType != BinaryTagTypes.LONG)
@@ -122,19 +156,18 @@ public class BinaryTagSerializer implements TypeSerializer<BinaryTag> {
     }
 
     @Override
-    @NullMarked
-    public void serialize(Type type, @Nullable BinaryTag binaryTag, ConfigurationNode node) throws SerializationException {
+    public void serialize(final Type type, @Nullable final BinaryTag binaryTag, final ConfigurationNode node) throws SerializationException {
         if (binaryTag == null) return;
         switch (binaryTag) {
-            case NumberBinaryTag numberBinaryTag ->
+            case final NumberBinaryTag numberBinaryTag ->
                     node.options().serializers().get(NumberBinaryTag.class).serialize(NumberBinaryTag.class, numberBinaryTag, node);
-            case StringBinaryTag stringBinaryTag ->
+            case final StringBinaryTag stringBinaryTag ->
                     node.options().serializers().get(StringBinaryTag.class).serialize(StringBinaryTag.class, stringBinaryTag, node);
-            case ListBinaryTag listBinaryTag ->
+            case final ListBinaryTag listBinaryTag ->
                     node.options().serializers().get(ListBinaryTag.class).serialize(ListBinaryTag.class, listBinaryTag, node);
-            case CompoundBinaryTag compoundBinaryTag ->
+            case final CompoundBinaryTag compoundBinaryTag ->
                     node.options().serializers().get(CompoundBinaryTag.class).serialize(CompoundBinaryTag.class, compoundBinaryTag, node);
-            case ArrayBinaryTag arrayBinaryTag ->
+            case final ArrayBinaryTag arrayBinaryTag ->
                     node.options().serializers().get(ArrayBinaryTag.class).serialize(ArrayBinaryTag.class, arrayBinaryTag, node);
             default -> throw new IllegalStateException("Unknown tag type: " + binaryTag.type());
         }

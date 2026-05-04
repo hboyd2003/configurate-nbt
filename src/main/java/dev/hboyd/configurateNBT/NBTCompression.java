@@ -19,21 +19,36 @@
 package dev.hboyd.configurateNBT;
 
 import net.kyori.adventure.nbt.BinaryTagIO;
-import org.jspecify.annotations.NullMarked;
 
-@NullMarked
+/**
+ * NBT compression types.
+ */
 public enum NBTCompression {
+    /**
+     * No compression.
+     */
     NONE(BinaryTagIO.Compression.NONE),
+    /**
+     * <a href="https://en.wikipedia.org/wiki/Gzip">GZIP</a> compression.
+     */
     GZIP(BinaryTagIO.Compression.GZIP),
+    /**
+     * <a href="https://en.wikipedia.org/wiki/Zlib">ZLIB</a> compression.
+     */
     ZLIB(BinaryTagIO.Compression.ZLIB);
 
     private final BinaryTagIO.Compression compression;
 
-    NBTCompression(BinaryTagIO.Compression compression) {
+    NBTCompression(final BinaryTagIO.Compression compression) {
         this.compression = compression;
     }
 
+    /**
+     * Gets the underlying {@link BinaryTagIO.Compression}.
+     *
+     * @return the compression
+     */
     public BinaryTagIO.Compression compression() {
-        return compression;
+        return this.compression;
     }
 }

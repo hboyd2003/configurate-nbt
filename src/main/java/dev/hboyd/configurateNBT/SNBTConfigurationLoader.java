@@ -19,20 +19,31 @@
 package dev.hboyd.configurateNBT;
 
 import dev.hboyd.configurateNBT.serializer.BinaryTagSerializer;
-import net.kyori.adventure.nbt.*;
+import net.kyori.adventure.nbt.BinaryTag;
+import net.kyori.adventure.nbt.TagStringIO;
 import net.kyori.option.Option;
 import net.kyori.option.OptionSchema;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-import org.spongepowered.configurate.*;
-import org.spongepowered.configurate.loader.*;
+import org.spongepowered.configurate.BasicConfigurationNode;
+import org.spongepowered.configurate.ConfigurateException;
+import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.ConfigurationOptions;
+import org.spongepowered.configurate.loader.AbstractConfigurationLoader;
+import org.spongepowered.configurate.loader.CommentHandler;
+import org.spongepowered.configurate.loader.ParsingException;
 import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.util.UnmodifiableCollections;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.Set;
 
-@NullMarked
+/**
+ * Loads and saves {@link ConfigurationNode}s in the <a href="https://minecraft.wiki/w/NBT_format#SNBT_format">SNBT Format</a>.
+ *
+ * @see <a href="https://minecraft.wiki/w/NBT_format#SNBT_format">SNBT Format</a>
+ */
 public final class SNBTConfigurationLoader extends AbstractConfigurationLoader<BasicConfigurationNode> {
     private final TagStringIO tagStringIO;
     private @Nullable BinaryTag tag;
@@ -41,10 +52,10 @@ public final class SNBTConfigurationLoader extends AbstractConfigurationLoader<B
             Integer.class, Double.class, Byte.class, Long.class, Short.class, Float.class, // numeric
             int[].class, byte[].class, long[].class, String.class); // complex types
 
-    private SNBTConfigurationLoader(Builder builder) {
+    private SNBTConfigurationLoader(final Builder builder) {
         super(builder, new CommentHandler[] {});
 
-        TagStringIO.Builder tagStringIOBuilder = TagStringIO.builder();
+        final TagStringIO.Builder tagStringIOBuilder = TagStringIO.builder();
 
         if (builder.optionState().value(Builder.INDENT_TYPE) == IndentType.SPACE)
             tagStringIOBuilder.indent(builder.optionState().value(Builder.INDENT));
@@ -52,11 +63,6 @@ public final class SNBTConfigurationLoader extends AbstractConfigurationLoader<B
 
         tagStringIOBuilder.acceptLegacy(builder.optionState().value(Builder.LEGACY_FORMAT));
         this.tagStringIO = tagStringIOBuilder.build();
-    }
-
-    public enum IndentType {
-        TAB,
-        SPACE
     }
 
     /**
@@ -67,7 +73,7 @@ public final class SNBTConfigurationLoader extends AbstractConfigurationLoader<B
      *                     generating the configuration
      */
     @Override
-    public void save(ConfigurationNode node) throws ConfigurateException {
+    public void save(final ConfigurationNode node) throws ConfigurateException {
         super.save(node);
     }
 
@@ -78,40 +84,62 @@ public final class SNBTConfigurationLoader extends AbstractConfigurationLoader<B
      * @return newly created empty node
      */
     @Override
-    public BasicConfigurationNode createNode(ConfigurationOptions options) {
+    public BasicConfigurationNode createNode(final ConfigurationOptions options) {
         return BasicConfigurationNode.root(options);
     }
 
     @Override
-    protected void loadInternal(BasicConfigurationNode node, BufferedReader reader) throws ParsingException {
+    protected void loadInternal(final BasicConfigurationNode node, final BufferedReader reader) throws ParsingException {
         try {
             this.tag = this.tagStringIO.asCompound(reader.readAllAsString());
-        } catch (IOException e) {
+        } catch (final IOException e) {
             // Since StringTagParseException is not public we cannot provide correct exception
             throw new RuntimeException(e);
         }
 
         try {
             node.options().serializers().get(BinaryTag.class).serialize(BinaryTag.class, this.tag, node);
-        } catch (SerializationException e) {
+        } catch (final SerializationException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    protected void saveInternal(ConfigurationNode node, Writer writer) throws ConfigurateException {
+    protected void saveInternal(final ConfigurationNode node, final Writer writer) throws ConfigurateException {
         this.tag = node.options().serializers().get(BinaryTag.class).deserialize(BinaryTag.class, node);
         try {
-            tagStringIO.toWriter(this.tag, writer);
-        } catch (IOException e) {
+            this.tagStringIO.toWriter(this.tag, writer);
+        } catch (final IOException e) {
             throw new SerializationException(e);
         }
     }
 
+    /**
+     * Create a new builder for {@link SNBTConfigurationLoader} instances.
+     *
+     * @return a new builder
+     */
     public static Builder builder() {
         return new Builder();
     }
 
+    /**
+     * Indent type.
+     */
+    public enum IndentType {
+        /**
+         * Indent using tab characters.
+         */
+        TAB,
+        /**
+         * Indent using space characters.
+         */
+        SPACE
+    }
+
+    /**
+     * Builder for {@link SNBTConfigurationLoader} instances.
+     */
     public static final class Builder extends AbstractConfigurationLoader.Builder<Builder, SNBTConfigurationLoader> {
         private static final OptionSchema.Mutable UNSAFE_SCHEMA = OptionSchema.childSchema(AbstractConfigurationLoader.Builder.SCHEMA);
 
