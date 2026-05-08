@@ -5,9 +5,9 @@ checkstyle = "14.1.0"
 # Libraries
 adventureAPI = "4.26.1"
 configurate = "4.2.0"
-
-# Build
 jspecify = "1.0.0"
+checkerFramework = "4.2.3"
+jetbrainsAnnotations = "26.1.0"
 
 # Testing
 junit = "6.0.3"
@@ -20,13 +20,13 @@ indraCheckstyle = { id = "net.kyori.indra.checkstyle", version.ref = "indra" }
 
 [libraries]
 configurateCore = { group = "org.spongepowered", name = "configurate-core", version.ref = "configurate" }
+jspecify = { group = "org.jspecify", name = "jspecify", version.ref = "jspecify" }
+checkerFramework = { group = "org.checkerframework", name = "checker-qual", version.ref = "checkerFramework" }
+jetbrainsAnnotations = { group = "org.jetbrains", name = "annotations", version.ref = "jetbrainsAnnotations" }
 
 # Adventure
 adventureAPI = { group = "net.kyori",  name = "adventure-api", version.ref = "adventureAPI" }
 adventureNBT = { group = "net.kyori",  name = "adventure-nbt", version.ref = "adventureAPI" }
-
-# Build
-jspecify = { group = "org.jspecify", name = "jspecify", version.ref = "jspecify" }
 
 # Testing
 junitJupiter = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junit" }

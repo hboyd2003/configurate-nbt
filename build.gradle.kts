@@ -17,9 +17,11 @@ repositories {
 }
 
 dependencies {
-    api(libs.jspecify)
     api(libs.bundles.adventureAPI)
     api(libs.configurateCore)
+    api(libs.jspecify)
+    api(libs.checkerFramework)
+    api(libs.jetbrainsAnnotations)
 
     testImplementation(libs.junitJupiter)
     testRuntimeOnly(libs.bundles.junitJupiterRuntime)
