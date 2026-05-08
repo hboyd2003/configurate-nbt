@@ -17,9 +17,6 @@ dependencies {
     api(libs.bundles.adventureAPI)
     api(libs.configurateCore)
 
-    implementation(libs.configurateYaml)
-
-
     testImplementation(libs.junitJupiter)
     testRuntimeOnly(libs.bundles.junitJupiterRuntime)
 }
