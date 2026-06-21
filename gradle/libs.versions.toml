@@ -2,6 +2,8 @@
 # Gradle Plugins
 indra = "4.2.0-SNAPSHOT"
 checkstyle = "14.1.0"
+gitSimpleSemver = "2.4.0"
+
 # Libraries
 adventureAPI = "4.26.1"
 configurate = "4.2.0"
@@ -17,6 +19,7 @@ indra = { id = "net.kyori.indra", version.ref = "indra" }
 indraPublishing = { id = "net.kyori.indra.publishing", version.ref = "indra" }
 indraLicenserSpotless = { id = "net.kyori.indra.licenser.spotless", version.ref = "indra" }
 indraCheckstyle = { id = "net.kyori.indra.checkstyle", version.ref = "indra" }
+gitSimpleSemver = { id = "dev.hboyd.git-simple-semver", version.ref = "gitSimpleSemver" }
 
 [libraries]
 configurateCore = { group = "org.spongepowered", name = "configurate-core", version.ref = "configurate" }
