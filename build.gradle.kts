@@ -8,14 +8,6 @@ plugins {
     alias(libs.plugins.indraCheckstyle)
 }
 
-repositories {
-    mavenCentral()
-    maven {
-        name = "hboyd-dev-repo"
-        url = uri("https://repo.hboyd.dev/snapshots/")
-    }
-}
-
 dependencies {
     api(libs.bundles.adventureAPI)
     api(libs.configurateCore)
