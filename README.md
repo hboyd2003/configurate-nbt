@@ -1,7 +1,7 @@
 # Configurate NBT
 
 [Configurate](https://github.com/SpongePowered/Configurate) loaders and serializers for NBT (Named Binary Tag) using [Kyori Adventure NBT](https://github.com/KyoriPowered/adventure).
-Supports saving and loading via NBT as well as serializing NBT data into configure.
+Supports saving and loading via NBT as well as serializing NBT data into Configurate.
 
 ### Loaders
 - NBT
@@ -11,17 +11,17 @@ Supports saving and loading via NBT as well as serializing NBT data into configu
 This library provides BinaryTag serializers that can be used independently with any Configurate loader.
 Since NBT needs to maintain type, two different kinds of serializers are provided:
 - **Type-Safe Serializers** preserve exact numeric types by appending SNBT-style suffixes (`b`, `s`, `i`, `l`, `f`, `d`).
-- **Type-Unsafe Serializers** relies on the configuration loader to de-serialize to correct numeric type. Some loaders
-(HOCON, JSON, YAML, etc.) do not preserve type and as such will not de-serialize correctly.
+- **Type-Unsafe Serializers** relies on the configuration loader to deserialize to the correct numeric type. Some
+ loaders (HOCON, JSON, YAML, etc.) do not preserve type and as such will not deserialize correctly.
 
 For both kinds a static `TypeSerializerCollection` is accessible in `BinaryTagSerializer`
 
 #### A Note on Lists
-Adventure NBT lists can support heterogeneity (a list with multiple tag types), but, for this a list must be explicitly
-created with support for it. When deserializing lists the deserializer will always presume that a list that deserializes
-to one type should be created as a non-heterogeneity supporting list. This means that if a list that supports
-heterogeneity but only contains one tag type is serialized upon deserialization a non-heterogeneity supporting list will
-be returned.
+Adventure NBT lists can support heterogeneity (a list with multiple tag types), but for this a list must be explicitly
+created with support for it. When deserializing lists, the deserializer will always presume that a list that
+deserializes to one type should be created as a non-heterogeneity supporting list. This means that if a list that
+supports heterogeneity but only contains one tag type is serialized upon deserialization, a non-heterogeneity supporting
+list will be returned.
 
 ## Installation
 
