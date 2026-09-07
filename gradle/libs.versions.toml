@@ -7,7 +7,7 @@ gitSimpleSemver = "2.4.0"
 # Libraries
 adventureAPI = "4.26.1"
 configurate = "4.2.0"
-jspecify = "1.0.0"
+jspecify = "1.0.1"
 checkerFramework = "4.2.3"
 jetbrainsAnnotations = "26.1.0"
 
