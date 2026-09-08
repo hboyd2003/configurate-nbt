@@ -137,7 +137,7 @@ public final class NBTConfigurationLoader implements ConfigurationLoader<BasicCo
                                         final BufferedInputStream inputStream) throws ConfigurateException {
         final BasicConfigurationNode node = this.createNode(options);
 
-        try {
+        try (inputStream) {
             final CompoundBinaryTag tag = BinaryTagIO.unlimitedReader().read(inputStream, this.compression);
 
             final TypeSerializer<CompoundBinaryTag> serializer
@@ -208,9 +208,8 @@ public final class NBTConfigurationLoader implements ConfigurationLoader<BasicCo
                 = requireNonNull(node.options().serializers().get(CompoundBinaryTag.class), "CompoundBinaryTag serializer");
         final CompoundBinaryTag tag = serializer.deserialize(CompoundBinaryTag.class, node);
 
-        try {
+        try (outputStream) {
             BinaryTagIO.writer().write(tag, outputStream, compression);
-            outputStream.close();
         } catch (final IOException e) {
             throw new ConfigurateException(node, "Failed to save", e);
         }

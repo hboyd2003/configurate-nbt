@@ -90,7 +90,7 @@ public final class SNBTConfigurationLoader extends AbstractConfigurationLoader<B
 
     @Override
     protected void loadInternal(final BasicConfigurationNode node, final BufferedReader reader) throws ParsingException {
-        try {
+        try (reader) {
             this.tag = this.tagStringIO.asCompound(reader.readAllAsString());
         } catch (final IOException e) {
             // Exception is actually a StringTagParseException which has position, but it isn't public.
@@ -107,7 +107,7 @@ public final class SNBTConfigurationLoader extends AbstractConfigurationLoader<B
     @Override
     protected void saveInternal(final ConfigurationNode node, final Writer writer) throws ConfigurateException {
         this.tag = node.options().serializers().get(BinaryTag.class).deserialize(BinaryTag.class, node);
-        try {
+        try (writer) {
             this.tagStringIO.toWriter(this.tag, writer);
         } catch (final IOException e) {
             throw new ConfigurateException(e);
