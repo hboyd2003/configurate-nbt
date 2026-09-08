@@ -51,9 +51,9 @@ public final class TypeSafeNumberBinaryTagSerializer implements TypeSerializer<N
     private TypeSafeNumberBinaryTagSerializer() {}
 
     @Override
-    public @Nullable NumberBinaryTag deserialize(final Type type, final ConfigurationNode node) throws SerializationException {
-        String string = node.get(String.class);
-        if (string == null) return null;
+    public NumberBinaryTag deserialize(final Type type, final ConfigurationNode node) throws SerializationException {
+        if (node.empty()) throw new SerializationException("Node value must not be null or empty");
+        @SuppressWarnings("DataFlowIssue") String string = node.raw().toString(); // Non-null by empty check above
 
         char suffix = Character.toLowerCase(string.charAt(string.length() - 1));
         if (Character.isDigit(suffix)) { // Int and double can lack a suffix
