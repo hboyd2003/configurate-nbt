@@ -91,6 +91,9 @@ public final class NBTConfigurationLoader implements ConfigurationLoader<BasicCo
      */
     @Override
     public BasicConfigurationNode load(final ConfigurationOptions options) throws ConfigurateException {
+        if (!this.canLoad())
+            throw new UnsupportedOperationException("This loader does not support loading as it lacks a source");
+
         final BufferedInputStream inputStream;
         try {
             inputStream = this.source.call();
@@ -172,6 +175,9 @@ public final class NBTConfigurationLoader implements ConfigurationLoader<BasicCo
      */
     @Override
     public void save(final ConfigurationNode node) throws ConfigurateException {
+        if (!this.canSave())
+            throw new UnsupportedOperationException("This loader does not support saving as it lacks a sink");
+
         final BufferedOutputStream outputStream;
         try {
             outputStream = this.sink.call();
@@ -233,6 +239,16 @@ public final class NBTConfigurationLoader implements ConfigurationLoader<BasicCo
         return this.defaultOptions;
     }
 
+    @Override
+    public boolean canLoad() {
+        return this.source != null;
+    }
+
+    @Override
+    public boolean canSave() {
+        return this.sink != null;
+    }
+
     /**
      * Create a new builder for {@link NBTConfigurationLoader} instances.
      *
@@ -259,14 +275,16 @@ public final class NBTConfigurationLoader implements ConfigurationLoader<BasicCo
         private @Nullable OptionState optionState;
         private ConfigurationOptions defaultOptions;
 
-        private Callable<BufferedInputStream> source;
-        private Callable<BufferedOutputStream> sink;
+        private @Nullable Callable<BufferedInputStream> source;
+        private @Nullable Callable<BufferedOutputStream> sink;
 
         private Builder() {
             this.defaultOptions = ConfigurationOptions.defaults()
                     .serializers(TypeSerializerCollection.defaults().childBuilder()
                             .registerAll(BinaryTagSerializer.TYPE_UNSAFE_SERIALIZERS).build())
                     .nativeTypes(NATIVE_TYPES);
+            this.source = null;
+            this.sink = null;
             this.optionBuilder = SCHEMA.stateBuilder()
                     .values(ValueSource.systemProperty(CONFIGURATE_PREFIX))
                     .values(ValueSource.environmentVariable(CONFIGURATE_PREFIX));
@@ -349,7 +367,7 @@ public final class NBTConfigurationLoader implements ConfigurationLoader<BasicCo
          * @param source the source
          * @return this builder (for chaining)
          */
-        public Builder source(final Callable<BufferedInputStream> source) {
+        public Builder source(@Nullable final Callable<BufferedInputStream> source) {
             this.source = source;
             return this;
         }
@@ -374,7 +392,7 @@ public final class NBTConfigurationLoader implements ConfigurationLoader<BasicCo
          * @param sink the sink
          * @return this builder (for chaining)
          */
-        public Builder sink(final Callable<BufferedOutputStream> sink) {
+        public Builder sink(@Nullable final Callable<BufferedOutputStream> sink) {
             this.sink = sink;
             return this;
         }
@@ -440,6 +458,9 @@ public final class NBTConfigurationLoader implements ConfigurationLoader<BasicCo
          * @return a new loader
          */
         public NBTConfigurationLoader build() {
+            if (this.sink == null) requireNonNull(this.source, "source");
+            else if (this.source == null) requireNonNull(this.sink, "sink");
+
             return new NBTConfigurationLoader(this);
         }
 
