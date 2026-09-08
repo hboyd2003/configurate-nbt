@@ -39,7 +39,7 @@ import java.lang.reflect.Type;
  * Serializer for {@link BinaryTag}s.
  *
  * <p>Optionally supports {@link org.spongepowered.configurate.loader.ConfigurationLoader} implementations that do not maintain
- * numeric type saftey.</p>
+ * numeric type safety.</p>
  *
  * @see <a href="https://minecraft.wiki/w/NBT_format#Data_types">Minecraft Wiki - SNBT Data types</a>
  * @see BinaryTagSerializer#TYPE_UNSAFE
@@ -54,7 +54,7 @@ public final class BinaryTagSerializer implements TypeSerializer<BinaryTag> {
      * <p>Types will not be maintained if the used {@link org.spongepowered.configurate.loader.ConfigurationLoader}
      * implementation does not fully maintain types.</p>
      *
-     * <p>Requires serializers for each {@link BinaryTag} type to be registered with the loader.</p>.
+     * <p>Requires serializers for each {@link BinaryTag} type to be registered with the loader.</p>
      */
     public static final BinaryTagSerializer TYPE_UNSAFE = new BinaryTagSerializer(false);
 
@@ -62,7 +62,7 @@ public final class BinaryTagSerializer implements TypeSerializer<BinaryTag> {
      * Serializer for {@link BinaryTag}s which attempts to coerce strings into {@link NumberBinaryTag}
      * before creating {@link StringBinaryTag}s with them.
      *
-     * <p>Requires serializers for each {@link BinaryTag} type to be registered with the loader.</p>.
+     * <p>Requires serializers for each {@link BinaryTag} type to be registered with the loader.</p>
      */
     public static final BinaryTagSerializer TYPE_SAFE = new BinaryTagSerializer(true);
 
