@@ -84,11 +84,21 @@ public final class TypeSafeNumberBinaryTagSerializer implements TypeSerializer<N
 
         switch (numberBinaryTag) {
             case final IntBinaryTag tag -> node.set(Scalars.STRING.type(), Integer.toString(tag.value()));
-            case final DoubleBinaryTag tag -> node.set(Scalars.STRING.type(), Double.toString(tag.value()));
+            case final DoubleBinaryTag tag -> {
+                if (Double.isInfinite(tag.value())) {
+                    throw new SerializationException("Infinite values are unsupported");
+                }
+                node.set(Scalars.STRING.type(), Double.toString(tag.value()));
+            }
             case final ByteBinaryTag tag -> node.set(Scalars.STRING.type(), Byte.toString(tag.value()) + BYTE_SUFFIX);
             case final LongBinaryTag tag -> node.set(Scalars.STRING.type(), Long.toString(tag.value()) + LONG_SUFFIX);
             case final ShortBinaryTag tag -> node.set(Scalars.STRING.type(), Short.toString(tag.value()) + SHORT_SUFFIX);
-            case final FloatBinaryTag tag -> node.set(Scalars.STRING.type(), Float.toString(tag.value()) + FLOAT_SUFFIX);
+            case final FloatBinaryTag tag -> {
+                if (Float.isInfinite(tag.value())) {
+                    throw new SerializationException("Infinite values are unsupported");
+                }
+                node.set(Scalars.STRING.type(), Float.toString(tag.value()) + FLOAT_SUFFIX);
+            }
             default -> throw new SerializationException("Unknown number binary tag type: " + numberBinaryTag);
         }
     }
