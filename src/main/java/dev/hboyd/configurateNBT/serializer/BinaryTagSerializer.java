@@ -110,15 +110,27 @@ public final class BinaryTagSerializer implements TypeSerializer<BinaryTag> {
     @Override
     @NullMarked
     public BinaryTag deserialize(final Type type, final ConfigurationNode node) throws SerializationException {
-        if (node.isList()) return this.deserializeList(node);
-        else if (node.isMap()) return node.options().serializers().get(CompoundBinaryTag.class)
-                .deserialize(CompoundBinaryTag.class, node);
+        if (node.isList()) { // Lists/arrays
+            final ListBinaryTag listBinaryTag = node.options().serializers().get(ListBinaryTag.class)
+                    .deserialize(ListBinaryTag.class, node);
+            if (listBinaryTag.isEmpty()) return listBinaryTag;
 
-        return this.deserializePrimitive(node);
-    }
+            // Check if this list can be an ArrayBinaryTag
+            final BinaryTagType<?> listElementType = listBinaryTag.get(0).type();
+            if (listElementType != BinaryTagTypes.INT
+                    && listElementType != BinaryTagTypes.BYTE
+                    && listElementType != BinaryTagTypes.LONG)
+                return listBinaryTag; // Return if list cannot be an array
 
-    private BinaryTag deserializePrimitive(final ConfigurationNode node) throws SerializationException {
-        if (this.typesafe && node.raw() instanceof String) {
+            // Check for heterogeneity
+            if (listBinaryTag.stream().anyMatch(binaryTag -> binaryTag.type() != listElementType))
+                return listBinaryTag;
+
+            // Convert to array
+            return node.options().serializers().get(ArrayBinaryTag.class).deserialize(ArrayBinaryTag.class, node);
+        } else if (node.isMap()) {
+            return node.options().serializers().get(CompoundBinaryTag.class).deserialize(CompoundBinaryTag.class, node);
+        } else if (this.typesafe) { // Primitive type-safe
             try {
                 return node.options().serializers().get(NumberBinaryTag.class).deserialize(NumberBinaryTag.class, node);
             } catch (final SerializationException _) {
@@ -128,29 +140,12 @@ public final class BinaryTagSerializer implements TypeSerializer<BinaryTag> {
 
         // Deserialize as "type-unsafe" which relies on the loader to load each as the correct type.
         return switch (node.raw()) {
-            case final String ignored -> node.options().serializers().get(StringBinaryTag.class).deserialize(StringBinaryTag.class, node);
-            case final Number ignored -> node.options().serializers().get(NumberBinaryTag.class).deserialize(NumberBinaryTag.class, node);
+            case final String ignored -> node.options().serializers().get(StringBinaryTag.class)
+                    .deserialize(StringBinaryTag.class, node);
+            case final Number ignored -> node.options().serializers().get(NumberBinaryTag.class)
+                    .deserialize(NumberBinaryTag.class, node);
             default -> throw new IllegalStateException("Unexpected type: " + node.raw());
         };
-    }
-
-    private BinaryTag deserializeList(final ConfigurationNode node) throws SerializationException {
-        final ListBinaryTag listBinaryTag = node.options().serializers().get(ListBinaryTag.class).deserialize(ListBinaryTag.class, node);
-        if (listBinaryTag.isEmpty()) return listBinaryTag;
-
-        // Check if this list can be an ArrayBinaryTag
-        final BinaryTagType<?> listElementType = listBinaryTag.get(0).type();
-        if (listElementType != BinaryTagTypes.INT
-                && listElementType != BinaryTagTypes.BYTE
-                && listElementType != BinaryTagTypes.LONG)
-            return listBinaryTag; // Return if list cannot be an array
-
-        // Check for heterogeneity
-        if (listBinaryTag.stream().anyMatch(binaryTag -> binaryTag.type() != listElementType))
-            return listBinaryTag;
-
-        // Convert to array
-        return node.options().serializers().get(ArrayBinaryTag.class).deserialize(ArrayBinaryTag.class, node);
     }
 
     @Override
