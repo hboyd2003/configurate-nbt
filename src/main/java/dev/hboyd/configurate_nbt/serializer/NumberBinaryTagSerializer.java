@@ -26,7 +26,6 @@ import net.kyori.adventure.nbt.LongBinaryTag;
 import net.kyori.adventure.nbt.NumberBinaryTag;
 import net.kyori.adventure.nbt.ShortBinaryTag;
 import org.jspecify.annotations.NullMarked;
-import org.spongepowered.configurate.serialize.CoercionFailedException;
 import org.spongepowered.configurate.serialize.ScalarSerializer;
 import org.spongepowered.configurate.serialize.SerializationException;
 
@@ -53,7 +52,7 @@ public final class NumberBinaryTagSerializer extends ScalarSerializer<NumberBina
             case final Long value -> LongBinaryTag.longBinaryTag(value);
             case final Float value -> FloatBinaryTag.floatBinaryTag(value);
             case final Short value -> ShortBinaryTag.shortBinaryTag(value);
-            default -> throw new CoercionFailedException(type, obj, "NumberBinaryTag");
+            default -> throw new SerializationException("Invalid number type '" + obj.getClass() + "' for number binary tag");
         };
     }
 

@@ -144,7 +144,7 @@ public final class BinaryTagSerializer implements TypeSerializer<BinaryTag> {
                     .deserialize(StringBinaryTag.class, node);
             case final Number ignored -> node.options().serializers().get(NumberBinaryTag.class)
                     .deserialize(NumberBinaryTag.class, node);
-            default -> throw new IllegalStateException("Unexpected type: " + node.raw());
+            default -> throw new SerializationException(node, type, "Unknown type: " + node.raw());
         };
     }
 
@@ -162,7 +162,7 @@ public final class BinaryTagSerializer implements TypeSerializer<BinaryTag> {
                     node.options().serializers().get(CompoundBinaryTag.class).serialize(CompoundBinaryTag.class, compoundBinaryTag, node);
             case final ArrayBinaryTag arrayBinaryTag ->
                     node.options().serializers().get(ArrayBinaryTag.class).serialize(ArrayBinaryTag.class, arrayBinaryTag, node);
-            default -> throw new IllegalStateException("Unknown tag type: " + binaryTag.type());
+            default -> throw new SerializationException(node, type, "Unknown tag type: " + binaryTag.type());
         }
     }
 }

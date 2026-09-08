@@ -61,7 +61,7 @@ public final class ArrayBinaryTagSerializer implements TypeSerializer<ArrayBinar
                 longArray[i] = listBinaryTag.getLong(i);
             }
             return LongArrayBinaryTag.longArrayBinaryTag(longArray);
-        } else throw new SerializationException("Unknown array binary tag will element type of " + listBinaryTag.elementType());
+        } else throw new SerializationException("Unknown array binary tag type with an element type of " + listBinaryTag.elementType());
     }
 
     @Override
@@ -71,7 +71,7 @@ public final class ArrayBinaryTagSerializer implements TypeSerializer<ArrayBinar
             case final IntArrayBinaryTag intArrayBinaryTag -> node.set(int[].class, intArrayBinaryTag.value());
             case final ByteArrayBinaryTag intArrayBinaryTag -> node.set(byte[].class, intArrayBinaryTag.value());
             case final LongArrayBinaryTag longArrayBinaryTag -> node.set(long[].class, longArrayBinaryTag.value());
-            default -> throw new IllegalStateException("Unknown array binary tag type: " + arrayBinaryTag);
+            default -> throw new SerializationException(ArrayBinaryTag.class, "Unknown array binary tag type: " + arrayBinaryTag);
         }
     }
 }

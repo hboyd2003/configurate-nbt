@@ -93,14 +93,14 @@ public final class SNBTConfigurationLoader extends AbstractConfigurationLoader<B
         try {
             this.tag = this.tagStringIO.asCompound(reader.readAllAsString());
         } catch (final IOException e) {
-            // Since StringTagParseException is not public we cannot provide correct exception
-            throw new RuntimeException(e);
+            // Exception is actually a StringTagParseException which has position, but it isn't public.
+            throw ParsingException.wrap(node, e);
         }
 
         try {
             node.options().serializers().get(BinaryTag.class).serialize(BinaryTag.class, this.tag, node);
         } catch (final SerializationException e) {
-            throw new RuntimeException(e);
+            throw ParsingException.wrap(node, e);
         }
     }
 
@@ -110,7 +110,7 @@ public final class SNBTConfigurationLoader extends AbstractConfigurationLoader<B
         try {
             this.tagStringIO.toWriter(this.tag, writer);
         } catch (final IOException e) {
-            throw new SerializationException(e);
+            throw new ConfigurateException(e);
         }
     }
 

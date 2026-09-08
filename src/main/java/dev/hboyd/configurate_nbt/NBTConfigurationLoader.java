@@ -33,6 +33,7 @@ import org.spongepowered.configurate.ConfigurationOptions;
 import org.spongepowered.configurate.loader.ConfigurationLoader;
 import org.spongepowered.configurate.reference.ConfigurationReference;
 import org.spongepowered.configurate.reference.WatchServiceListener;
+import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.serialize.TypeSerializer;
 import org.spongepowered.configurate.serialize.TypeSerializerCollection;
 import org.spongepowered.configurate.util.UnmodifiableCollections;
@@ -42,10 +43,8 @@ import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.util.Set;
@@ -98,7 +97,7 @@ public final class NBTConfigurationLoader implements ConfigurationLoader<BasicCo
         try {
             inputStream = this.source.call();
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw new ConfigurateException("Failed to create source", e);
         }
 
         return this.load(options, inputStream);
@@ -145,9 +144,10 @@ public final class NBTConfigurationLoader implements ConfigurationLoader<BasicCo
                     = requireNonNull(node.options().serializers().get(CompoundBinaryTag.class),
                     "CompoundBinaryTag serializer");
             serializer.serialize(CompoundBinaryTag.class, tag, node);
-        } catch (FileNotFoundException | NoSuchFileException _) {
         } catch (final IOException e) {
-            throw new ConfigurateException(e);
+            throw SerializationException.wrap(node, e);
+        } catch (final Exception e) {
+            throw new ConfigurateException("Failed to load", e);
         }
 
         return node;
@@ -182,7 +182,7 @@ public final class NBTConfigurationLoader implements ConfigurationLoader<BasicCo
         try {
             outputStream = this.sink.call();
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw new ConfigurateException(node, "Failed to create sink", e);
         }
 
         save(node, outputStream, this.compression);
@@ -212,9 +212,7 @@ public final class NBTConfigurationLoader implements ConfigurationLoader<BasicCo
             BinaryTagIO.writer().write(tag, outputStream, compression);
             outputStream.close();
         } catch (final IOException e) {
-            throw new ConfigurateException(e);
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw new ConfigurateException(node, "Failed to save", e);
         }
     }
 

@@ -71,10 +71,10 @@ public final class TypeSafeNumberBinaryTagSerializer implements TypeSerializer<N
                 case LONG_SUFFIX -> LongBinaryTag.longBinaryTag(Long.parseLong(string));
                 case SHORT_SUFFIX -> ShortBinaryTag.shortBinaryTag(Short.parseShort(string));
                 case FLOAT_SUFFIX -> FloatBinaryTag.floatBinaryTag(Float.parseFloat(string));
-                default -> throw new SerializationException("Unknown number binary tag: " + string);
+                default -> throw new SerializationException("Unknown number binary tag suffix: " + suffix);
             };
         } catch (final NumberFormatException e) {
-            throw new SerializationException(e);
+            throw new SerializationException(node, type, e);
         }
     }
 
@@ -89,7 +89,7 @@ public final class TypeSafeNumberBinaryTagSerializer implements TypeSerializer<N
             case final LongBinaryTag tag -> node.set(Scalars.STRING.type(), Long.toString(tag.value()) + LONG_SUFFIX);
             case final ShortBinaryTag tag -> node.set(Scalars.STRING.type(), Short.toString(tag.value()) + SHORT_SUFFIX);
             case final FloatBinaryTag tag -> node.set(Scalars.STRING.type(), Float.toString(tag.value()) + FLOAT_SUFFIX);
-            default -> throw new SerializationException("Unknown number binary tag: " + numberBinaryTag);
+            default -> throw new SerializationException("Unknown number binary tag type: " + numberBinaryTag);
         }
     }
 }
