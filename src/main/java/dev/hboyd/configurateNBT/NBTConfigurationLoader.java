@@ -265,7 +265,7 @@ public final class NBTConfigurationLoader implements ConfigurationLoader<BasicCo
         private Builder() {
             this.defaultOptions = ConfigurationOptions.defaults()
                     .serializers(TypeSerializerCollection.defaults().childBuilder()
-                            .registerAll(BinaryTagSerializer.TYPE_SAFE_SERIALIZERS).build())
+                            .registerAll(BinaryTagSerializer.TYPE_UNSAFE_SERIALIZERS).build())
                     .nativeTypes(NATIVE_TYPES);
             this.optionBuilder = SCHEMA.stateBuilder()
                     .values(ValueSource.systemProperty(CONFIGURATE_PREFIX))
