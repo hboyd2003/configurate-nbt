@@ -448,6 +448,7 @@ public final class NBTConfigurationLoader implements ConfigurationLoader<BasicCo
          *
          * @param input the input to load
          * @return a deserialized node
+         * @throws ConfigurateException when an issue occurs loading the node
          */
         public ConfigurationNode buildAndLoadByteArray(final byte[] input) throws ConfigurateException {
             return this.source(() -> new BufferedInputStream(new ByteArrayInputStream(input)))
@@ -460,6 +461,7 @@ public final class NBTConfigurationLoader implements ConfigurationLoader<BasicCo
          *
          * @param output the node to write
          * @return the output byte array
+         * @throws ConfigurateException when an issue occurs saving the node
          */
         public byte[] buildAndSaveByteArray(final ConfigurationNode output) throws ConfigurateException {
             requireNonNull(output, "output");
