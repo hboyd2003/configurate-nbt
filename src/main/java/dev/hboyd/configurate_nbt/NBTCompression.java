@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package dev.hboyd.configurateNBT;
+package dev.hboyd.configurate_nbt;
 
 import net.kyori.adventure.nbt.BinaryTagIO;
 

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package dev.hboyd.configurateNBT.serializer;
+package dev.hboyd.configurate_nbt.serializer;
 
 import net.kyori.adventure.nbt.BinaryTag;
 import net.kyori.adventure.nbt.BinaryTagType;
@@ -75,7 +75,7 @@ public final class ListBinaryTagSerializer implements TypeSerializer<ListBinaryT
     }
 
     @Override
-    public @Nullable ListBinaryTag emptyValue(final Type specificType, final ConfigurationOptions options) {
+    public ListBinaryTag emptyValue(final Type specificType, final ConfigurationOptions options) {
         return ListBinaryTag.builder().build();
     }
 }

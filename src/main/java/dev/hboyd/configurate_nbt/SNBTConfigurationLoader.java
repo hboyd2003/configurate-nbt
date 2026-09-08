@@ -16,9 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package dev.hboyd.configurateNBT;
+package dev.hboyd.configurate_nbt;
 
-import dev.hboyd.configurateNBT.serializer.BinaryTagSerializer;
+import dev.hboyd.configurate_nbt.serializer.BinaryTagSerializer;
 import net.kyori.adventure.nbt.BinaryTag;
 import net.kyori.adventure.nbt.TagStringIO;
 import net.kyori.option.Option;

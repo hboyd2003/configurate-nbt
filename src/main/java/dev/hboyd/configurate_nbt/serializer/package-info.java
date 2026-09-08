@@ -20,6 +20,6 @@
  * NBT Serializers.
  */
 @NullMarked
-package dev.hboyd.configurateNBT.serializer;
+package dev.hboyd.configurate_nbt.serializer;
 
 import org.jspecify.annotations.NullMarked;

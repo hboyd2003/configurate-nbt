@@ -16,44 +16,49 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package dev.hboyd.configurateNBT;
+package dev.hboyd.configurate_nbt;
 
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.loader.ConfigurationFormat;
 import org.spongepowered.configurate.loader.ConfigurationLoader;
 
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.Set;
 
 /**
- * The configuration format for the {@link SNBTConfigurationLoader}.
+ * The configuration format for the {@link NBTConfigurationLoader}.
  */
-public class SNBTConfigurationFormat implements ConfigurationFormat {
+public class NBTConfigurationFormat implements ConfigurationFormat {
     @Override
     public String id() {
-        return "snbt";
+        return "nbt";
     }
 
     @Override
     public Set<String> supportedExtensions() {
-        return Set.of("snbt");
+        return Set.of("nbt", "dat");
     }
 
     /**
-     * Create a new {@link SNBTConfigurationLoader} configured to load from the provided file.
+     * Create a new {@link NBTConfigurationLoader} configured to load from the provided file.
      *
      * @param file the file to load from
      * @param options the options to use to configure the node
-     * @return a newly created {@link SNBTConfigurationLoader} loader
+     * @return a newly created {@link NBTConfigurationLoader} loader
      */
     @Override
-    public SNBTConfigurationLoader create(final Path file, final ConfigurationNode options) {
-        return SNBTConfigurationLoader.builder().path(file).defaultOptions(options.options()).build();
+    public NBTConfigurationLoader create(final Path file, final ConfigurationNode options) {
+        try {
+            return NBTConfigurationLoader.builder().path(file).defaultOptions(options.options()).build();
+        } catch (final IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
-     * Unsupported by {@link SNBTConfigurationLoader}.
+     * Unsupported by {@link NBTConfigurationLoader}.
      *
      * @throws UnsupportedOperationException for all calls
      */

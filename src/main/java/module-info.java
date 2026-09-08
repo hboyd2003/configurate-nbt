@@ -4,7 +4,7 @@
  *
  * @provides org.spongepowered.configurate.loader.ConfigurationFormat
  */
-module dev.hboyd.configurateNBT {
+module dev.hboyd.configurate_nbt {
     requires transitive net.kyori.adventure;
     requires transitive net.kyori.adventure.nbt;
     requires transitive net.kyori.option;
@@ -15,10 +15,10 @@ module dev.hboyd.configurateNBT {
     requires static org.jspecify;
     requires static org.checkerframework.checker.qual;
 
-    exports dev.hboyd.configurateNBT;
-    exports dev.hboyd.configurateNBT.serializer;
+    exports dev.hboyd.configurate_nbt;
+    exports dev.hboyd.configurate_nbt.serializer;
 
     provides org.spongepowered.configurate.loader.ConfigurationFormat with
-            dev.hboyd.configurateNBT.NBTConfigurationFormat,
-            dev.hboyd.configurateNBT.SNBTConfigurationFormat;
+            dev.hboyd.configurate_nbt.NBTConfigurationFormat,
+            dev.hboyd.configurate_nbt.SNBTConfigurationFormat;
 }

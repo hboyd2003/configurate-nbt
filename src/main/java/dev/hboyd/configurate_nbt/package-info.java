@@ -18,6 +18,6 @@
 
 @NullMarked
 @SuppressWarnings("checkstyle:MissingJavadocPackage")
-package dev.hboyd.configurateNBT;
+package dev.hboyd.configurate_nbt;
 
 import org.jspecify.annotations.NullMarked;
