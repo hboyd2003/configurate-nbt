@@ -33,7 +33,6 @@ import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.serialize.TypeSerializer;
 import org.spongepowered.configurate.serialize.TypeSerializerCollection;
 
-import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 
 /**
@@ -130,7 +129,6 @@ public final class BinaryTagSerializer implements TypeSerializer<BinaryTag> {
         // Deserialize as "type-unsafe" which relies on the loader to load each as the correct type.
         return switch (node.raw()) {
             case final String ignored -> node.options().serializers().get(StringBinaryTag.class).deserialize(StringBinaryTag.class, node);
-            case final Array ignored -> node.options().serializers().get(ArrayBinaryTag.class).deserialize(ArrayBinaryTag.class, node);
             case final Number ignored -> node.options().serializers().get(NumberBinaryTag.class).deserialize(NumberBinaryTag.class, node);
             default -> throw new IllegalStateException("Unexpected type: " + node.raw());
         };
