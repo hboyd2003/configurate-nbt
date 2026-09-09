@@ -69,7 +69,7 @@ public final class ArrayBinaryTagSerializer implements TypeSerializer<ArrayBinar
         if (arrayBinaryTag == null) return;
         switch (arrayBinaryTag) {
             case final IntArrayBinaryTag intArrayBinaryTag -> node.set(int[].class, intArrayBinaryTag.value());
-            case final ByteArrayBinaryTag intArrayBinaryTag -> node.set(byte[].class, intArrayBinaryTag.value());
+            case final ByteArrayBinaryTag byteArrayBinaryTag -> node.set(byte[].class, byteArrayBinaryTag.value());
             case final LongArrayBinaryTag longArrayBinaryTag -> node.set(long[].class, longArrayBinaryTag.value());
             default -> throw new SerializationException(ArrayBinaryTag.class, "Unknown array binary tag type: " + arrayBinaryTag);
         }
