@@ -18,47 +18,21 @@
 
 package dev.hboyd.configurate_nbt;
 
-import org.spongepowered.configurate.ConfigurationNode;
-import org.spongepowered.configurate.loader.ConfigurationFormat;
-import org.spongepowered.configurate.loader.ConfigurationLoader;
+import org.jetbrains.annotations.ApiStatus;
+import org.spongepowered.configurate.BasicConfigurationNode;
+import org.spongepowered.configurate.loader.AbstractConfigurationFormat;
 
-import java.net.URL;
-import java.nio.file.Path;
 import java.util.Set;
 
 /**
  * The configuration format for the {@link SNBTConfigurationLoader}.
  */
-public class SNBTConfigurationFormat implements ConfigurationFormat {
-    @Override
-    public String id() {
-        return "snbt";
-    }
-
-    @Override
-    public Set<String> supportedExtensions() {
-        return Set.of("snbt");
-    }
-
+public class SNBTConfigurationFormat extends AbstractConfigurationFormat<BasicConfigurationNode, SNBTConfigurationLoader, SNBTConfigurationLoader.Builder> {
     /**
-     * Create a new {@link SNBTConfigurationLoader} configured to load from the provided file.
-     *
-     * @param file the file to load from
-     * @param options the options to use to configure the node
-     * @return a newly created {@link SNBTConfigurationLoader} loader
+     * For service loader only.
      */
-    @Override
-    public SNBTConfigurationLoader create(final Path file, final ConfigurationNode options) {
-        return SNBTConfigurationLoader.builder().path(file).defaultOptions(options.options()).build();
-    }
-
-    /**
-     * Unsupported by {@link SNBTConfigurationLoader}.
-     *
-     * @throws UnsupportedOperationException for all calls
-     */
-    @Override
-    public ConfigurationLoader<? extends Object> create(final URL url, final ConfigurationNode options) {
-        throw new UnsupportedOperationException();
+    @ApiStatus.Internal
+    public SNBTConfigurationFormat() {
+        super("snbt", SNBTConfigurationLoader::builder, Set.of("snbt"));
     }
 }
