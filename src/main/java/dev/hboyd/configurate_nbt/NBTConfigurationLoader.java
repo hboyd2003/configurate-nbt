@@ -104,7 +104,7 @@ public final class NBTConfigurationLoader implements ConfigurationLoader<BasicCo
     }
 
     /**
-     * Attempts to load a {@link ConfigurationNode} using this loader, using a given byte array as the source.
+     * Attempts to load a {@link ConfigurationNode} with the given byte array as the source.
      *
      * <p>The resultant node represents the root of the configuration being
      * loaded.</p>
@@ -118,7 +118,7 @@ public final class NBTConfigurationLoader implements ConfigurationLoader<BasicCo
     }
 
     /**
-     * Attempts to load a {@link ConfigurationNode} using this loader, using a given byte array as the source.
+     * Attempts to load a {@link ConfigurationNode} with the given configuration options and byte array as the source.
      *
      * <p>The resultant node represents the root of the configuration being
      * loaded.</p>
