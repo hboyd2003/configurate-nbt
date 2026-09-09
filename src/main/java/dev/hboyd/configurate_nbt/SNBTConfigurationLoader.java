@@ -29,6 +29,7 @@ import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.ConfigurationOptions;
 import org.spongepowered.configurate.loader.AbstractConfigurationLoader;
 import org.spongepowered.configurate.loader.CommentHandler;
+import org.spongepowered.configurate.loader.HeaderMode;
 import org.spongepowered.configurate.loader.ParsingException;
 import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.util.UnmodifiableCollections;
@@ -151,6 +152,7 @@ public final class SNBTConfigurationLoader extends AbstractConfigurationLoader<B
         public static final Option<Boolean> LEGACY_FORMAT = UNSAFE_SCHEMA.booleanOption("snbt:legacy_format", false);
 
         Builder() {
+            this.optionStateBuilder().value(HEADER_MODE, HeaderMode.NONE);
             this.defaultOptions = this.defaultOptions()
                     .nativeTypes(NATIVE_TYPES)
                     .serializers(this.defaultOptions.serializers().childBuilder()
@@ -161,6 +163,19 @@ public final class SNBTConfigurationLoader extends AbstractConfigurationLoader<B
         @Override
         protected OptionSchema optionSchema() {
             return SCHEMA;
+        }
+
+        /**
+         * Sets the header mode of the resultant loader. Only a header type of none is supported by snbt.
+         *
+         * @param mode the header mode
+         * @return this builder (for chaining)
+         * @throws UnsupportedOperationException when given any mode other than none
+         */
+        @Override
+        public Builder headerMode(final HeaderMode mode) {
+            if (mode != HeaderMode.NONE) throw new UnsupportedOperationException("SNBT does not a header mode other than none.");
+            return this;
         }
 
         /**
