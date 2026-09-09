@@ -65,18 +65,6 @@ public final class SNBTConfigurationLoader extends AbstractConfigurationLoader<B
     }
 
     /**
-     * Attempts to save a {@link ConfigurationNode} using this loader, to the defined sink.
-     *
-     * @param node the node to save
-     * @throws ConfigurateException if any sort of error occurs with writing or
-     *                     generating the configuration
-     */
-    @Override
-    public void save(final ConfigurationNode node) throws ConfigurateException {
-        super.save(node);
-    }
-
-    /**
      * Create an empty node with the provided options.
      *
      * @param options node options
