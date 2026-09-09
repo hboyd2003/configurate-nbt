@@ -23,7 +23,6 @@ import net.kyori.adventure.nbt.BinaryTag;
 import net.kyori.adventure.nbt.TagStringIO;
 import net.kyori.option.Option;
 import net.kyori.option.OptionSchema;
-import org.jspecify.annotations.Nullable;
 import org.spongepowered.configurate.BasicConfigurationNode;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationNode;
@@ -46,7 +45,6 @@ import java.util.Set;
  */
 public final class SNBTConfigurationLoader extends AbstractConfigurationLoader<BasicConfigurationNode> {
     private final TagStringIO tagStringIO;
-    private @Nullable BinaryTag tag;
 
     private static final Set<Class<?>> NATIVE_TYPES = UnmodifiableCollections.toSet(
             Integer.class, Double.class, Byte.class, Long.class, Short.class, Float.class, // numeric
@@ -90,15 +88,16 @@ public final class SNBTConfigurationLoader extends AbstractConfigurationLoader<B
 
     @Override
     protected void loadInternal(final BasicConfigurationNode node, final BufferedReader reader) throws ParsingException {
+        final BinaryTag tag;
         try (reader) {
-            this.tag = this.tagStringIO.asCompound(reader.readAllAsString());
+            tag = this.tagStringIO.asCompound(reader.readAllAsString());
         } catch (final IOException e) {
             // Exception is actually a StringTagParseException which has position, but it isn't public.
             throw ParsingException.wrap(node, e);
         }
 
         try {
-            node.options().serializers().get(BinaryTag.class).serialize(BinaryTag.class, this.tag, node);
+            node.options().serializers().get(BinaryTag.class).serialize(BinaryTag.class, tag, node);
         } catch (final SerializationException e) {
             throw ParsingException.wrap(node, e);
         }
@@ -106,9 +105,9 @@ public final class SNBTConfigurationLoader extends AbstractConfigurationLoader<B
 
     @Override
     protected void saveInternal(final ConfigurationNode node, final Writer writer) throws ConfigurateException {
-        this.tag = node.options().serializers().get(BinaryTag.class).deserialize(BinaryTag.class, node);
+        final BinaryTag tag = node.options().serializers().get(BinaryTag.class).deserialize(BinaryTag.class, node);
         try (writer) {
-            this.tagStringIO.toWriter(this.tag, writer);
+            this.tagStringIO.toWriter(tag, writer);
         } catch (final IOException e) {
             throw new ConfigurateException(e);
         }
