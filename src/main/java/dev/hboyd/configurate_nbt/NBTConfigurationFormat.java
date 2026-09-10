@@ -18,20 +18,25 @@
 
 package dev.hboyd.configurate_nbt;
 
+import net.kyori.option.Option;
+import net.kyori.option.value.ValueSource;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.loader.ConfigurationFormat;
-import org.spongepowered.configurate.loader.ConfigurationLoader;
+import org.spongepowered.configurate.serialize.SerializationException;
 
 import java.io.BufferedInputStream;
-import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * The configuration format for the {@link NBTConfigurationLoader}.
  */
 public class NBTConfigurationFormat implements ConfigurationFormat {
+    private static final Pattern PATH_SPLIT = Pattern.compile("[:/]");
+
     @Override
     public String id() {
         return "nbt";
@@ -49,7 +54,10 @@ public class NBTConfigurationFormat implements ConfigurationFormat {
 
     @Override
     public NBTConfigurationLoader create(final Path file, final ConfigurationNode options) {
-        return NBTConfigurationLoader.builder().path(file).defaultOptions(options.options()).build();
+        return NBTConfigurationLoader.builder()
+                .path(file)
+                .editOptions(opts -> opts.values(nodeValueSource(options)))
+                .build();
     }
 
     @Override
@@ -63,7 +71,20 @@ public class NBTConfigurationFormat implements ConfigurationFormat {
     public NBTConfigurationLoader create(final URL url, final ConfigurationNode options) {
         return NBTConfigurationLoader.builder()
                 .source(() -> new BufferedInputStream(url.openStream()))
-                .defaultOptions(options.options())
+                .editOptions(opts -> opts.values(nodeValueSource(options)))
                 .build();
+    }
+
+    private static ValueSource nodeValueSource(final ConfigurationNode node) {
+        return new ValueSource() {
+            @Override
+            public @Nullable <T> T value(final Option<T> option) {
+                try {
+                    return node.node((Object[]) PATH_SPLIT.split(option.id(), -1)).get(option.valueType().type());
+                } catch (final SerializationException e) {
+                    throw new IllegalArgumentException(e);
+                }
+            }
+        };
     }
 }
