@@ -61,6 +61,7 @@ public final class SNBTConfigurationLoader extends AbstractConfigurationLoader<B
         else tagStringIOBuilder.indentTab(builder.optionState().value(Builder.INDENT));
 
         tagStringIOBuilder.acceptLegacy(builder.optionState().value(Builder.LEGACY_FORMAT));
+        tagStringIOBuilder.emitLegacy(builder.optionState().value(Builder.LEGACY_FORMAT));
         this.tagStringIO = tagStringIOBuilder.build();
     }
 
