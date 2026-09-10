@@ -47,13 +47,6 @@ public class NBTConfigurationFormat implements ConfigurationFormat {
         return NBTConfigurationLoader.builder().path(file).build();
     }
 
-    /**
-     * Create a new {@link NBTConfigurationLoader} configured to load from the provided file.
-     *
-     * @param file    the file to load from
-     * @param options the options to use to configure the node
-     * @return a newly created {@link NBTConfigurationLoader} loader
-     */
     @Override
     public NBTConfigurationLoader create(final Path file, final ConfigurationNode options) {
         return NBTConfigurationLoader.builder().path(file).defaultOptions(options.options()).build();
