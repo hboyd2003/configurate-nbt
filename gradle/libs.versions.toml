@@ -5,7 +5,7 @@ checkstyle = "14.1.0"
 gitSimpleSemver = "2.4.0"
 
 # Libraries
-adventureAPI = "4.26.1"
+adventureAPI = "5.2.0"
 configurate = "4.2.0"
 jspecify = "1.0.1"
 checkerFramework = "4.2.3"

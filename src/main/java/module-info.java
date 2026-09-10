@@ -5,10 +5,9 @@
  * @provides org.spongepowered.configurate.loader.ConfigurationFormat
  */
 module dev.hboyd.configurate_nbt {
-    requires transitive net.kyori.adventure;
+    requires transitive net.kyori.adventure.api;
     requires transitive net.kyori.adventure.nbt;
     requires transitive net.kyori.option;
-    requires transitive net.kyori.examination.api;
     requires transitive org.spongepowered.configurate;
 
     requires static org.jetbrains.annotations;
