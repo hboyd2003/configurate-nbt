@@ -50,11 +50,7 @@ public class NBTConfigurationFormat implements ConfigurationFormat {
      */
     @Override
     public NBTConfigurationLoader create(final Path file, final ConfigurationNode options) {
-        try {
-            return NBTConfigurationLoader.builder().path(file).defaultOptions(options.options()).build();
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
-        }
+        return NBTConfigurationLoader.builder().path(file).defaultOptions(options.options()).build();
     }
 
     /**

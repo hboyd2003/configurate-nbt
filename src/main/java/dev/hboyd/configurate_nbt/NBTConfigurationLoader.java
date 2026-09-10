@@ -339,7 +339,7 @@ public final class NBTConfigurationLoader implements ConfigurationLoader<BasicCo
          * @param file the configuration file
          * @return this builder (for chaining)
          */
-        public Builder file(final File file) throws IOException {
+        public Builder file(final File file) {
             return this.path(requireNonNull(file, "file").toPath());
         }
 
@@ -349,7 +349,7 @@ public final class NBTConfigurationLoader implements ConfigurationLoader<BasicCo
          * @param path the path of the configuration file
          * @return this builder (for chaining)
          */
-        public Builder path(final Path path) throws IOException {
+        public Builder path(final Path path) {
             final Path absPath = requireNonNull(path, "path").toAbsolutePath();
             this.source = () -> new BufferedInputStream(Files.newInputStream(absPath));
             this.sink = () -> new BufferedOutputStream(Files.newOutputStream(absPath));
