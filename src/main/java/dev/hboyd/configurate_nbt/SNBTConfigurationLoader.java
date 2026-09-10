@@ -64,6 +64,11 @@ public final class SNBTConfigurationLoader extends AbstractConfigurationLoader<B
         this.tagStringIO = tagStringIOBuilder.build();
     }
 
+    @Override
+    public CommentHandler defaultCommentHandler() {
+        throw new UnsupportedOperationException("SNBT does not support header");
+    }
+
     /**
      * Create an empty node with the provided options.
      *
