@@ -41,8 +41,9 @@ public final class ArrayBinaryTagSerializer implements TypeSerializer<ArrayBinar
 
     @Override
     public ArrayBinaryTag deserialize(final Type type, final ConfigurationNode node) throws SerializationException {
-        final ListBinaryTag listBinaryTag = node.options().serializers().get(ListBinaryTag.class).deserialize(ListBinaryTag.class, node);
-        listBinaryTag.unwrapHeterogeneity();
+        final ListBinaryTag listBinaryTag = node.options().serializers().get(ListBinaryTag.class)
+                .deserialize(ListBinaryTag.class, node)
+                .unwrapHeterogeneity();
         if (listBinaryTag.elementType() == BinaryTagTypes.INT) {
             final int[] intArray = new int[listBinaryTag.size()];
             for (int i = 0; i < intArray.length; i++) {
