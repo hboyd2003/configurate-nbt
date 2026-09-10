@@ -22,6 +22,7 @@ import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.loader.ConfigurationFormat;
 import org.spongepowered.configurate.loader.ConfigurationLoader;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
@@ -41,10 +42,15 @@ public class NBTConfigurationFormat implements ConfigurationFormat {
         return Set.of("nbt", "dat");
     }
 
+    @Override
+    public NBTConfigurationLoader create(final Path file) {
+        return NBTConfigurationLoader.builder().path(file).build();
+    }
+
     /**
      * Create a new {@link NBTConfigurationLoader} configured to load from the provided file.
      *
-     * @param file the file to load from
+     * @param file    the file to load from
      * @param options the options to use to configure the node
      * @return a newly created {@link NBTConfigurationLoader} loader
      */
@@ -53,13 +59,18 @@ public class NBTConfigurationFormat implements ConfigurationFormat {
         return NBTConfigurationLoader.builder().path(file).defaultOptions(options.options()).build();
     }
 
-    /**
-     * Unsupported by {@link NBTConfigurationLoader}.
-     *
-     * @throws UnsupportedOperationException for all calls
-     */
     @Override
-    public ConfigurationLoader<? extends Object> create(final URL url, final ConfigurationNode options) {
-        throw new UnsupportedOperationException();
+    public NBTConfigurationLoader create(final URL url) {
+        return NBTConfigurationLoader.builder()
+                .source(() -> new BufferedInputStream(url.openStream()))
+                .build();
+    }
+
+    @Override
+    public NBTConfigurationLoader create(final URL url, final ConfigurationNode options) {
+        return NBTConfigurationLoader.builder()
+                .source(() -> new BufferedInputStream(url.openStream()))
+                .defaultOptions(options.options())
+                .build();
     }
 }
