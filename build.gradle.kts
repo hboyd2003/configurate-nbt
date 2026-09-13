@@ -16,7 +16,7 @@ dependencies {
     api(libs.checkerFramework)
     api(libs.jetbrainsAnnotations)
 
-    testImplementation(libs.junitJupiter)
+    testImplementation(libs.bundles.junitJupiterCompile)
     testRuntimeOnly(libs.bundles.junitJupiterRuntime)
 }
 
