@@ -110,6 +110,7 @@ public final class BinaryTagSerializer implements TypeSerializer<BinaryTag> {
     @Override
     @NullMarked
     public BinaryTag deserialize(final Type type, final ConfigurationNode node) throws SerializationException {
+        if (node.isNull()) throw new SerializationException("Node value must not be null");
         if (node.isList()) { // Lists/arrays
             final ListBinaryTag listBinaryTag = node.options().serializers().get(ListBinaryTag.class)
                     .deserialize(ListBinaryTag.class, node);
