@@ -289,6 +289,15 @@ public final class NBTConfigurationLoader implements ConfigurationLoader<BasicCo
         }
 
         /**
+         * Get the schema of available options that can be set on this loader.
+         *
+         * @return the option schema
+         */
+        public OptionSchema optionSchema() {
+            return SCHEMA;
+        }
+
+        /**
          * Compute a snapshot of the currently set options for created loaders.
          *
          * @return the option state
